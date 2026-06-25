@@ -54,55 +54,99 @@ revealEls.forEach(el => {
 });
 
 // FORMULARIO — Formspree AJAX
+
 const form = document.getElementById('contactForm');
 const formMsg = document.getElementById('formMsg');
 const submitBtn = form?.querySelector('button[type="submit"]');
 
 form?.addEventListener('submit', async function (e) {
+
   e.preventDefault();
 
-  // Validación básica
   const nombre = form.nombre.value.trim();
   const email = form.email.value.trim();
   const mensaje = form.mensaje.value.trim();
 
   if (!nombre || !email || !mensaje) {
-    showMsg('Por favor completá los campos obligatorios.', 'error');
+    showMsg(
+      'Por favor completá los campos obligatorios.',
+      'error'
+    );
     return;
   }
 
-  // Estado cargando
   submitBtn.textContent = 'Enviando...';
   submitBtn.disabled = true;
 
   try {
-    const response = await fetch('https://formspree.io/f/mykqkrod', {
-      method: 'POST',
-      headers: { 'Accept': 'application/json' },
-      body: new FormData(form)
-    });
+
+    const response = await fetch(
+      'https://formspree.io/f/mykqkrod',
+      {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json'
+        },
+        body: new FormData(form)
+      }
+    );
 
     if (response.ok) {
-      showMsg('¡Gracias! Te respondemos en menos de 24 horas.', 'success');
+
+      showMsg(
+        '¡Gracias! Recibimos tu consulta. Te responderemos dentro de las próximas 24 horas.',
+        'success'
+      );
+
       form.reset();
+
     } else {
-      const data = await response.json();
-      const errMsg = data?.errors?.map(e => e.message).join(', ') || 'Hubo un error al enviar. Intentá de nuevo.';
-      showMsg(errMsg, 'error');
+
+      let errorMessage =
+        'No pudimos enviar tu consulta. Intentá nuevamente.';
+
+      try {
+        const data = await response.json();
+
+        if (data.errors) {
+          errorMessage = data.errors
+            .map(error => error.message)
+            .join(', ');
+        }
+
+      } catch (e) {}
+
+      showMsg(errorMessage, 'error');
+
     }
-  } catch (err) {
-    showMsg('Error de conexión. Revisá tu internet e intentá de nuevo.', 'error');
+
+  } catch (error) {
+
+    showMsg(
+      'Error de conexión. Revisá tu internet e intentá nuevamente.',
+      'error'
+    );
+
   } finally {
-    submitBtn.textContent = 'Enviar consulta';
+
+    submitBtn.textContent = 'Solicitar presupuesto';
     submitBtn.disabled = false;
+
   }
+
 });
 
 function showMsg(text, type) {
+
   formMsg.textContent = text;
-  formMsg.className = 'form-msg ' + type;
+  formMsg.className = `form-msg ${type}`;
   formMsg.style.display = 'block';
-  setTimeout(() => { formMsg.style.display = 'none'; }, 6000);
+
+  setTimeout(() => {
+    formMsg.style.display = 'none';
+  }, 6000);
+
+}
 }
 
 // ACTIVE NAV
