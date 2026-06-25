@@ -20,8 +20,7 @@ window.addEventListener('scroll', () => {
 const heroBg = document.getElementById('heroBg');
 window.addEventListener('scroll', () => {
   if (!heroBg) return;
-  const scrollY = window.scrollY;
-  heroBg.style.transform = `scale(1.1) translateY(${scrollY * 0.25}px)`;
+  heroBg.style.transform = `scale(1.1) translateY(${window.scrollY * 0.25}px)`;
 }, { passive: true });
 
 // SMOOTH SCROLL
@@ -47,7 +46,6 @@ const observer = new IntersectionObserver((entries) => {
     }
   });
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
 revealEls.forEach(el => {
   el.style.opacity = '0';
   el.style.transform = 'translateY(20px)';
@@ -55,31 +53,56 @@ revealEls.forEach(el => {
   observer.observe(el);
 });
 
-// FORMULARIO
-function handleSubmit(e) {
+// FORMULARIO — Formspree AJAX
+const form = document.getElementById('contactForm');
+const formMsg = document.getElementById('formMsg');
+const submitBtn = form?.querySelector('button[type="submit"]');
+
+form?.addEventListener('submit', async function (e) {
   e.preventDefault();
-  const form = document.getElementById('contactForm');
-  const btn = form.querySelector('button[type="submit"]');
-  if (!form.nombre.value.trim() || !form.email.value.trim() || !form.mensaje.value.trim()) {
+
+  // Validación básica
+  const nombre = form.nombre.value.trim();
+  const email = form.email.value.trim();
+  const mensaje = form.mensaje.value.trim();
+
+  if (!nombre || !email || !mensaje) {
     showMsg('Por favor completá los campos obligatorios.', 'error');
     return;
   }
-  btn.textContent = 'Enviando...';
-  btn.disabled = true;
-  setTimeout(() => {
-    showMsg('¡Gracias! Te respondemos en menos de 24 horas.', 'success');
-    form.reset();
-    btn.textContent = 'Enviar consulta';
-    btn.disabled = false;
-  }, 1200);
-}
+
+  // Estado cargando
+  submitBtn.textContent = 'Enviando...';
+  submitBtn.disabled = true;
+
+  try {
+    const response = await fetch('https://formspree.io/f/mykqkrod', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: new FormData(form)
+    });
+
+    if (response.ok) {
+      showMsg('¡Gracias! Te respondemos en menos de 24 horas.', 'success');
+      form.reset();
+    } else {
+      const data = await response.json();
+      const errMsg = data?.errors?.map(e => e.message).join(', ') || 'Hubo un error al enviar. Intentá de nuevo.';
+      showMsg(errMsg, 'error');
+    }
+  } catch (err) {
+    showMsg('Error de conexión. Revisá tu internet e intentá de nuevo.', 'error');
+  } finally {
+    submitBtn.textContent = 'Enviar consulta';
+    submitBtn.disabled = false;
+  }
+});
 
 function showMsg(text, type) {
-  const msg = document.getElementById('formMsg');
-  msg.textContent = text;
-  msg.className = 'form-msg ' + type;
-  msg.style.display = 'block';
-  setTimeout(() => { msg.style.display = 'none'; }, 6000);
+  formMsg.textContent = text;
+  formMsg.className = 'form-msg ' + type;
+  formMsg.style.display = 'block';
+  setTimeout(() => { formMsg.style.display = 'none'; }, 6000);
 }
 
 // ACTIVE NAV
