@@ -1,46 +1,43 @@
-// msb.studio — script.js
+// MSB Digital Studio — script.js
 
-// ---- NAV MOBILE TOGGLE ----
+// NAV MOBILE
 const navToggle = document.getElementById('navToggle');
 const navMobile = document.getElementById('navMobile');
-
-navToggle?.addEventListener('click', () => {
-  navMobile.classList.toggle('open');
-});
-
-// Cerrar menú al hacer click en un link
+navToggle?.addEventListener('click', () => navMobile.classList.toggle('open'));
 document.querySelectorAll('.nav-mobile-link').forEach(link => {
   link.addEventListener('click', () => navMobile.classList.remove('open'));
 });
 
-// ---- NAV SCROLL EFFECT ----
+// NAV SCROLL
 const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => {
-  if (window.scrollY > 40) {
-    nav.style.background = 'rgba(13,13,13,0.98)';
-  } else {
-    nav.style.background = 'rgba(13,13,13,0.92)';
-  }
-});
+  nav.style.background = window.scrollY > 40
+    ? 'rgba(10,10,18,0.98)'
+    : 'rgba(10,10,18,0.9)';
+}, { passive: true });
 
-// ---- SMOOTH SCROLL para links internos ----
+// PARALLAX HERO IMAGE
+const heroBg = document.getElementById('heroBg');
+window.addEventListener('scroll', () => {
+  if (!heroBg) return;
+  const scrollY = window.scrollY;
+  heroBg.style.transform = `scale(1.1) translateY(${scrollY * 0.25}px)`;
+}, { passive: true });
+
+// SMOOTH SCROLL
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
     const target = document.querySelector(this.getAttribute('href'));
     if (target) {
       e.preventDefault();
-      const offset = 72;
-      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+      const top = target.getBoundingClientRect().top + window.scrollY - 72;
       window.scrollTo({ top, behavior: 'smooth' });
     }
   });
 });
 
-// ---- SCROLL REVEAL ----
-const revealEls = document.querySelectorAll(
-  '.service-card, .process-step, .value, .social-card, .about-card'
-);
-
+// SCROLL REVEAL
+const revealEls = document.querySelectorAll('.service-card, .process-step, .value, .social-card, .about-card');
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -58,28 +55,17 @@ revealEls.forEach(el => {
   observer.observe(el);
 });
 
-// ---- FORMULARIO DE CONTACTO ----
+// FORMULARIO
 function handleSubmit(e) {
   e.preventDefault();
   const form = document.getElementById('contactForm');
-  const msg = document.getElementById('formMsg');
   const btn = form.querySelector('button[type="submit"]');
-
-  const nombre = form.nombre.value.trim();
-  const email = form.email.value.trim();
-  const mensaje = form.mensaje.value.trim();
-
-  if (!nombre || !email || !mensaje) {
+  if (!form.nombre.value.trim() || !form.email.value.trim() || !form.mensaje.value.trim()) {
     showMsg('Por favor completá los campos obligatorios.', 'error');
     return;
   }
-
-  // Estado cargando
   btn.textContent = 'Enviando...';
   btn.disabled = true;
-
-  // Simulación de envío (reemplazar con Formspree o EmailJS)
-  // Para conectar Formspree: cambiar el action del form a https://formspree.io/f/TU_ID
   setTimeout(() => {
     showMsg('¡Gracias! Te respondemos en menos de 24 horas.', 'success');
     form.reset();
@@ -96,19 +82,13 @@ function showMsg(text, type) {
   setTimeout(() => { msg.style.display = 'none'; }, 6000);
 }
 
-// ---- ACTIVE NAV LINK por sección ----
+// ACTIVE NAV
 const sections = document.querySelectorAll('section[id]');
 const navLinks = document.querySelectorAll('.nav-links a');
-
 window.addEventListener('scroll', () => {
   let current = '';
-  sections.forEach(section => {
-    const top = section.offsetTop - 100;
-    if (window.scrollY >= top) current = section.getAttribute('id');
-  });
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.getAttribute('id'); });
   navLinks.forEach(link => {
-    link.style.color = link.getAttribute('href') === '#' + current
-      ? 'var(--gold)'
-      : '';
+    link.style.color = link.getAttribute('href') === '#' + current ? 'var(--gold)' : '';
   });
-});
+}, { passive: true });
