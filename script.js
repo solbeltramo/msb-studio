@@ -147,7 +147,6 @@ function showMsg(text, type) {
   }, 6000);
 
 }
-}
 
 // ACTIVE NAV
 const sections = document.querySelectorAll('section[id]');
