@@ -36,7 +36,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // SCROLL REVEAL
-const revealEls = document.querySelectorAll('.service-card, .process-step, .value, .social-card, .about-card');
+const revealEls = document.querySelectorAll('.service-card, .process-step, .value, .social-card, .about-card, .portfolio-card');
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
