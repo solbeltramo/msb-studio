@@ -208,6 +208,34 @@ em { font-style: italic; color: var(--gold); font-family: var(--font-italic); fo
   .hero { padding: 100px 24px 64px; }
   .hero-stats { flex-direction: column; align-items: flex-start; gap: 16px; }
   .stat-sep { display: none; }
+  /* WHATSAPP FLOTANTE */
+.whatsapp-float {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  background: #25d366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  z-index: 999;
+  transition: transform 0.2s, background 0.2s;
+}
+.whatsapp-float:hover {
+  background: #1fb855;
+  transform: scale(1.08);
+}
+@media (max-width: 680px) {
+  .whatsapp-float {
+    bottom: 16px;
+    right: 16px;
+    width: 50px;
+    height: 50px;
+  }
+}
   .stat { padding: 0; }
   .form-row { grid-template-columns: 1fr; }
   .about-visual { display: none; }
